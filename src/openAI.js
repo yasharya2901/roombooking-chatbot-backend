@@ -13,9 +13,6 @@ async function getResponseFromAI(content) {
     } catch (error) {
       console.error(error);
     }
-    
-    
   }
-getResponseFromAI("Hello!")
 
 module.exports = getResponseFromAI;
