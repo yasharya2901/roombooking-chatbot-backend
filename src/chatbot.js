@@ -1,11 +1,13 @@
 const getResponseFromAI = require('./openAI');
 const createConversation = require('./database/createConversation');
+const getResponseFromGPT = require('./openAIAddition')
+let globalConversationHistory = [];
 
 const chat = async (req, res) => {
     try {
         const request = req.body;
         console.log(request)
-        const response = await getResponseFromAI(request.message);
+        const response = await getResponseFromGPT(request.message, globalConversationHistory);
 
         // data to be saved by database
         const sessionId = request.sessionId;
@@ -13,6 +15,14 @@ const chat = async (req, res) => {
         const message = request.message;
         const responseFromAI = response;
 
+        globalConversationHistory.push({role:"user", content: message});
+        globalConversationHistory.push({role:"assistant", content: responseFromAI});
+
+        console.log("Conversation history:");
+        console.log("----------------------------------");
+        console.log(globalConversationHistory);
+        console.log("----------------------------------");
+        
         // save the conversation in the database
         createConversation({sessionId, userId, message, response: responseFromAI})
             .then(() => console.log('Conversation saved'))
