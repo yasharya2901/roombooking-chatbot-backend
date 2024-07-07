@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const chat = require('./chatbot');
+const chat = require('./services/chatbot');
 const sync = require('./database/sync');
 const cors = require('cors');
 const sequelize = require('./database/config');

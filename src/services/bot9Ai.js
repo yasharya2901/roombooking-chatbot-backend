@@ -11,7 +11,12 @@ async function getRooms() {
 async function getRoomDetails (){
     try{
         const a = await getRooms();
-        return a;
+        console.log("Rooms fetched successfully!");
+        const response = `
+            Here are the available rooms:
+            ${a}
+        `
+        return response;
     }
     catch(e){
         console.log("Error in getRoomDetails")
@@ -40,7 +45,18 @@ async function bookRoom(roomId, fullName, email, nights) {
 async function postRoomDetails(roomId, fullName, email, nights) {
     try {
         const a = await bookRoom(roomId, fullName, email, nights);
-        return a;
+        console.log("Room booked successfully!");
+
+        const response = `
+            Your room has been booked successfully! Here are the details:
+            Booking ID: ${a.bookingId}
+            Room Name: ${a.roomName}
+            Full Name: ${a.fullName}
+            Email: ${a.email}
+            Total Nights: ${a.nights}
+            Total Price: ${a.price}
+        `
+        return response;
     }
     catch (e) {
         console.log("Error in postRoomDetails")

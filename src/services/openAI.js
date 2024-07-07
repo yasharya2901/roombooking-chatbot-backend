@@ -8,6 +8,7 @@ async function runConversation(content, conversationHistory) {
   // Step 1: send the conversation and available functions to the model
   const messages = [
     // { role: "user", content: content },
+    { role: "system", content: "You are a room booking assistant. You can provide room details (name, price in rupees and description) and book rooms for users. Only ask for the room, user's full name, email, and the number of nights they want to stay. Do not ask for any other details. When the room is booked, always tell them the full information of booking response. Always confirm with the details before booking." },
     ...conversationHistory,
     { role: "user", content: content },
 
@@ -17,7 +18,7 @@ async function runConversation(content, conversationHistory) {
       type: "function",
       function: {
         name: "getRoomDetails",
-        description: "If the user asks for a room to stay or book, get the array of room details with its name, description, and price, and ask user which one they want to book",
+        description: "If the user asks for a room to stay or book, get them the room details with its name, description, and price, and ask user which one they want to book.",
       },
     },
 
@@ -25,13 +26,13 @@ async function runConversation(content, conversationHistory) {
         type: "function",
         function: {
             name: "postRoomDetails",
-            description: "If the user shows interest in booking the rooms, ask for the which room they want to book. They will tell you room either by the name of the room, or the order it was in (for e.g. first, second or third), or by price. Infer the room id by those details. If the user is mentioning first, take the room id argument as 1 and so on. and, then proceed with asking for the full name, email, and number of nights they want to book the room for. And, ask the user if they are sure to confirm the booking and then call this function. And return the response of the booking with the booking id and the details of the booking and total price.",
+            description: "Book the room for the user",
             parameters: {
                 type: "object",
                 properties: {
                     roomId: {
-                        type: "string",
-                        description: "The room id of the room to be booked",
+                        type: "number",
+                        description: "The ID of the room to book.",
                     },
                     fullName: {
                         type: "string",
@@ -55,7 +56,7 @@ async function runConversation(content, conversationHistory) {
 
 
   const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o",
     messages: messages,
     tools: tools,
     tool_choice: "auto", // auto is default, but we'll be explicit
@@ -101,7 +102,7 @@ async function runConversation(content, conversationHistory) {
     //   const functionArgs = JSON.parse(toolCall.function.arguments);
     }
     const secondResponse = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o",
       messages: messages,
     }); // get a new response from the model where it can see the function response
     return secondResponse.choices[0].message.content;
