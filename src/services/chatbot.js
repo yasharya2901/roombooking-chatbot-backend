@@ -1,6 +1,6 @@
 const getResponseFromAI = require('./openAI');
 const createConversation = require('../database/createConversation');
-const getResponseFromGPT = require('./openAIAddition')
+const getResponseFromGPT = require('./openAI')
 let globalConversationHistory = [];
 
 const chat = async (req, res) => {

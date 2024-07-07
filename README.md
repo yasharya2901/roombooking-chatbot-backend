@@ -22,5 +22,3 @@ To use the chatbot, follow these steps:
 4. Open the chatbot frontend
 
 5. Start chatting with the chatbot
-
-## How it Works
