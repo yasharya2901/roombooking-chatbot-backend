@@ -14,9 +14,9 @@ const Conversation = sequelize.define('Conversation', {
         type: DataTypes.STRING,
         allowNull: true
     },
-    response: {
+    role: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
     },
     createdAt: {
         type: DataTypes.DATE,

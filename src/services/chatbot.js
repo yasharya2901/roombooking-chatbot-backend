@@ -1,31 +1,33 @@
 const getResponseFromAI = require('./openAI');
 const createConversation = require('../database/createConversation');
 const getResponseFromGPT = require('./openAI')
-let globalConversationHistory = [];
+const getConversationHistory = require('./getConversationHistory');
 
 const chat = async (req, res) => {
     try {
         const request = req.body;
         console.log(request)
-        const response = await getResponseFromGPT(request.message, globalConversationHistory);
-
         // data to be saved by database
         const sessionId = request.sessionId;
         const userId = request.userId;
         const message = request.message;
-        const responseFromAI = response;
-
-        globalConversationHistory.push({role:"user", content: message});
-        globalConversationHistory.push({role:"assistant", content: responseFromAI});
-
-        // console.log("Conversation history:");
-        // console.log("----------------------------------");
-        // console.log(globalConversationHistory);
-        // console.log("----------------------------------");
         
-        // save the conversation in the database
-        createConversation({sessionId, userId, message, response: responseFromAI})
-            .then(() => console.log('Conversation saved'))
+        
+        // get conversation history
+        let conversationHistory = await getConversationHistory(sessionId);
+        console.log(conversationHistory);
+        const response = await getResponseFromGPT(request.message, conversationHistory);
+        const responseFromAI = response;
+        
+
+        // save the user conversation in the database
+        createConversation({sessionId, userId, message: message, role: "user"})
+            .then(() => console.log('User Conversation saved'))
+            .catch((error) => console.error('Error saving conversation:', error));
+        
+        // save the AI response in the database
+        createConversation({sessionId, userId, message: responseFromAI, role: "assistant"})
+            .then(() => console.log('AI Conversation saved'))
             .catch((error) => console.error('Error saving conversation:', error));
 
         res.json({response : response});
